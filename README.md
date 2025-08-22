@@ -70,3 +70,8 @@ Preferred communication style: Simple, everyday language.
 - **Error Handling**: Warnings suppression and exception handling for API requests
 - **Data Validation**: Input validation and data quality checks throughout the pipeline
 - **Performance**: Caching mechanisms for API responses and computational results
+## 📦 Installation
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/luqman262002/DrugForecast
