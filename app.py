@@ -219,6 +219,16 @@ def show_data_acquisition():
                             )
                             st.plotly_chart(fig, use_container_width=True)
                             
+                            st.write(f"**{ticker} Stock Price Interpretation:**")
+                            recent_price = stock_data[ticker]['Close'].iloc[-1]
+                            price_change_pct = ((stock_data[ticker]['Close'].iloc[-1] / stock_data[ticker]['Close'].iloc[0]) - 1) * 100
+                            st.write(f"""**Simple Explanation:**
+                            - **Current Price**: ${recent_price:.2f} per share
+                            - **Overall Change**: {'+' if price_change_pct > 0 else ''}{price_change_pct:.1f}% over the time period
+                            - **Trend**: The line shows how the company's stock value has changed over time
+                            - **Investment Insight**: {'Rising trend suggests investor confidence' if price_change_pct > 0 else 'Declining trend may indicate challenges' if price_change_pct < -10 else 'Relatively stable performance'}
+                            """)
+                            
                 except Exception as e:
                     st.error(f"Error fetching stock data: {str(e)}")
     
@@ -360,6 +370,15 @@ def show_exploratory_analysis():
                     title='Number of Trials by Phase'
                 )
                 st.plotly_chart(fig, use_container_width=True)
+                
+                st.write("**Trial Count by Phase Interpretation:**")
+                most_common_phase = phase_success.loc[phase_success['Trial_Count'].idxmax(), 'Phase']
+                st.write(f"""**Simple Explanation:**
+                - **{most_common_phase}** has the most trials in our dataset
+                - **Early phases** (Phase 1, 2) typically have more trials because many drugs don't make it to later phases
+                - **Later phases** (Phase 3, 4) have fewer trials because only promising drugs advance this far
+                - **Pattern**: This shows how the pharmaceutical "funnel" works - many drugs start, few finish
+                """)
         
         if 'enrollment' in data.columns:
             # Enrollment analysis
@@ -374,6 +393,17 @@ def show_exploratory_analysis():
                     nbins=20
                 )
                 st.plotly_chart(fig, use_container_width=True)
+                
+                st.write("**Enrollment Distribution Interpretation:**")
+                avg_enrollment_success = data[data['trial_outcome']==1]['enrollment'].mean()
+                avg_enrollment_failure = data[data['trial_outcome']==0]['enrollment'].mean()
+                st.write(f"""**Simple Explanation:**
+                - **Red bars**: Failed trials, **Blue bars**: Successful trials
+                - **Average enrollment for successful trials**: {avg_enrollment_success:.0f} patients
+                - **Average enrollment for failed trials**: {avg_enrollment_failure:.0f} patients
+                - **Key insight**: {'Successful trials tend to be larger' if avg_enrollment_success > avg_enrollment_failure else 'Trial size varies between successful and failed studies'}
+                - **Why this matters**: Larger trials generally provide more reliable results
+                """)
             
             with col2:
                 # Success rate by enrollment size
@@ -633,6 +663,19 @@ def show_predictive_modeling():
             plt.ylabel('Actual')
             plt.xlabel('Predicted')
             st.pyplot(fig)
+            
+            st.write("**Confusion Matrix Interpretation:**")
+            tn, fp, fn, tp = cm.ravel()
+            total = tn + fp + fn + tp
+            accuracy = (tp + tn) / total
+            st.write(f"""**Simple Explanation:**
+            - **Top-left ({tn})**: Correctly predicted failures (Good!)
+            - **Top-right ({fp})**: Wrongly predicted as failures (Missed opportunities)
+            - **Bottom-left ({fn})**: Wrongly predicted as successes (False hopes)
+            - **Bottom-right ({tp})**: Correctly predicted successes (Great!)
+            - **Overall Accuracy**: {accuracy:.1%} of predictions were correct
+            - **What this means**: The darker the blue, the more predictions in that category
+            """)
         
         with col2:
             st.subheader("ROC Curve")
@@ -688,6 +731,16 @@ def show_predictive_modeling():
             )
             st.plotly_chart(fig, use_container_width=True)
             
+            st.write("**Feature Importance Interpretation:**")
+            top_feature = importance_df.iloc[0]['Feature'] if len(importance_df) > 0 else "N/A"
+            st.write(f"""**Simple Explanation:**
+            - **{top_feature}** is the most important factor for predicting trial success
+            - **Longer bars** = More important for making predictions
+            - **What this tells us**: These are the key factors that determine if a trial will succeed
+            - **For investors**: Focus on trials with favorable characteristics in these top features
+            - **Real-world impact**: Companies should pay attention to these factors when designing trials
+            """)
+            
             # Detailed feature importance table
             st.subheader("Detailed Feature Importance")
             st.dataframe(importance_df)
@@ -735,6 +788,15 @@ def show_investment_insights():
                 )
                 st.plotly_chart(fig, use_container_width=True)
                 
+                st.write("**Risk-Return Analysis Interpretation:**")
+                st.write("""**Simple Explanation:**
+                - **Best investments**: Top-left area (low risk, high success rate)
+                - **Avoid**: Bottom-right area (high risk, low success rate)
+                - **Bubble size**: Number of trials (bigger = more experience)
+                - **Smart investing**: Look for sponsors with consistently low risk and high success rates
+                - **What this means**: Choose partners with proven track records and stable performance
+                """)
+                
                 # Top and bottom performers
                 col1, col2 = st.columns(2)
                 
@@ -777,6 +839,17 @@ def show_investment_insights():
                 color_continuous_scale='RdYlGn'
             )
             st.plotly_chart(fig, use_container_width=True)
+            
+            st.write("**Expected ROI Interpretation:**")
+            best_roi_phase = cost_analysis.loc[cost_analysis['Expected_ROI'].idxmax()].name if len(cost_analysis) > 0 else "N/A"
+            st.write(f"""**Simple Explanation:**
+            - **Green bars**: Phases with positive expected returns (profitable)
+            - **Red bars**: Phases with negative expected returns (likely losses)
+            - **{best_roi_phase}** offers the best expected return on investment
+            - **Higher bars**: Better investment opportunity
+            - **Investment strategy**: Focus on phases with consistently positive ROI
+            - **Reality check**: These are estimates based on average industry success rates and costs
+            """)
     
     with tab2:
         st.subheader("Portfolio Optimization")
