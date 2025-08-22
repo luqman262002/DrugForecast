@@ -1,4 +1,5 @@
 # Pharmaceutical Investment Analysis
+## Dr. Luqman Bin Fahad
 
 ## Overview
 
