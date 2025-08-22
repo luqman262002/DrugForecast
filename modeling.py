@@ -25,6 +25,16 @@ def prepare_features(data):
     # Create a copy to avoid modifying original data
     df = data.copy()
     
+    # Clean data - remove rows with NaN in target variable
+    df = df.dropna(subset=['trial_outcome'])
+    
+    # Ensure target variable is numeric and clean
+    df['trial_outcome'] = pd.to_numeric(df['trial_outcome'], errors='coerce')
+    df = df.dropna(subset=['trial_outcome'])
+    
+    if len(df) == 0:
+        raise ValueError("No valid data remaining after cleaning target variable")
+    
     # Target variable
     y = df['trial_outcome'].values
     

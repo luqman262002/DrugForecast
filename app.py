@@ -265,6 +265,21 @@ def show_data_acquisition():
                         
                         st.dataframe(merged_data.head())
                         
+                        # Add interpretation
+                        st.write("**Simulated Outcomes Interpretation:**")
+                        success_count = outcome_counts.get(1, 0)
+                        total_trials = len(merged_data)
+                        avg_success_prob = merged_data['success_probability'].mean()
+                        
+                        st.write(f"""**Key Insights:**
+                        - **Success Rate**: {success_count}/{total_trials} trials ({success_count/total_trials:.1%}) were simulated as successful
+                        - **Average Success Probability**: {avg_success_prob:.1%} across all trials
+                        - **Probability Distribution**: The histogram shows how success probabilities vary across trials
+                        - **Industry Reality**: These simulated outcomes reflect real-world pharmaceutical success rates, which are typically low due to the high risk and complexity of drug development
+                        
+                        The simulation considers factors like trial phase, sponsor type, and enrollment size to create realistic outcome predictions.
+                        """)
+                        
                     except Exception as e:
                         st.error(f"Error generating simulated outcomes: {str(e)}")
         else:
@@ -325,6 +340,16 @@ def show_exploratory_analysis():
                     color_continuous_scale='RdYlGn'
                 )
                 st.plotly_chart(fig, use_container_width=True)
+                
+                st.write("**Success Rate by Phase Interpretation:**")
+                best_phase = phase_success.loc[phase_success['Success_Rate'].idxmax(), 'Phase']
+                worst_phase = phase_success.loc[phase_success['Success_Rate'].idxmin(), 'Phase']
+                st.write(f"""**Key Insights:**
+                - **{best_phase}** shows the highest success rate ({phase_success['Success_Rate'].max():.1%})
+                - **{worst_phase}** shows the lowest success rate ({phase_success['Success_Rate'].min():.1%})
+                - Later phases typically have higher success rates as unsuccessful treatments are filtered out
+                - Phase 3 trials usually have the highest success rates due to prior validation
+                """)
             
             with col2:
                 # Trial count by phase
@@ -367,6 +392,14 @@ def show_exploratory_analysis():
                     title='Success Rate by Enrollment Size'
                 )
                 st.plotly_chart(fig, use_container_width=True)
+                
+                st.write("**Enrollment Size vs Success Interpretation:**")
+                st.write("""**Key Insights:**
+                - **Large trials** tend to have higher success rates due to better statistical power
+                - **Small trials** may have more variable results due to limited sample sizes
+                - **Industry Pattern**: Larger pharmaceutical companies typically run larger trials with better outcomes
+                - **Statistical Significance**: Larger enrollments provide more reliable results and regulatory confidence
+                """)
     
     with tab3:
         st.subheader("Sponsor Analysis")
@@ -395,6 +428,15 @@ def show_exploratory_analysis():
                     title='Sponsors by Number of Trials'
                 )
                 st.plotly_chart(fig, use_container_width=True)
+                
+                st.write("**Top Sponsors Interpretation:**")
+                top_sponsor = top_sponsors.iloc[0]['sponsor'] if len(top_sponsors) > 0 else "N/A"
+                st.write(f"""**Key Insights:**
+                - **{top_sponsor}** is the most active sponsor with the highest number of trials
+                - **Large pharmaceutical companies** typically dominate clinical trial activity
+                - **Research volume** often correlates with company size and R&D investment
+                - **Market leaders** tend to have diversified pipelines across multiple therapeutic areas
+                """)
             
             with col2:
                 st.subheader("Success Rate vs Trial Count")
@@ -411,6 +453,15 @@ def show_exploratory_analysis():
                         title='Sponsor Success Rate vs Trial Experience'
                     )
                     st.plotly_chart(fig, use_container_width=True)
+                    
+                    st.write("**Sponsor Experience vs Success Interpretation:**")
+                    st.write("""**Key Insights:**
+                    - **Bubble size** represents average enrollment size (larger = bigger trials)
+                    - **Experience matters**: Sponsors with more trials often show improved success rates
+                    - **Learning curve**: Organizations improve their trial design and execution over time
+                    - **Resource advantage**: Experienced sponsors often have better infrastructure and expertise
+                    - **Risk management**: Veteran companies are better at selecting viable drug candidates
+                    """)
                 else:
                     st.info("Not enough sponsors with sufficient trial data for meaningful analysis.")
     
@@ -428,6 +479,14 @@ def show_exploratory_analysis():
             sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0, ax=ax)
             plt.title('Feature Correlation Matrix')
             st.pyplot(fig)
+            
+            st.write("**Correlation Matrix Interpretation:**")
+            st.write("""This heatmap shows how different features relate to each other:
+            - **Red colors** indicate positive correlations (features move together)
+            - **Blue colors** indicate negative correlations (features move in opposite directions)  
+            - **White/neutral** colors indicate little to no correlation
+            - Strong correlations (>0.7 or <-0.7) may indicate redundant features or important relationships
+            """)
             
             # Feature importance for trial outcome
             if 'trial_outcome' in numerical_cols:
@@ -492,7 +551,14 @@ def show_predictive_modeling():
                 
                 with col2:
                     st.metric("Class Balance", f"{target_dist[1]}/{target_dist[0]}")
-                    st.metric("Success Rate", f"{np.mean(y):.1%}")
+                    success_rate = np.mean(y) if len(y) > 0 and not np.isnan(np.mean(y)) else 0
+                    st.metric("Success Rate", f"{success_rate:.1%}")
+                    
+                    st.write("**Target Variable Interpretation:**")
+                    st.write(f"""This chart shows the distribution of trial outcomes in our dataset. 
+                    Out of {len(y)} trials, {target_dist.get(1, 0)} were successful and {target_dist.get(0, 0)} failed. 
+                    The success rate of {success_rate:.1%} reflects the realistic challenges in pharmaceutical 
+                    development, where many trials don't meet their primary endpoints.""")
             else:
                 st.error("Failed to prepare features. Check your data.")
                 
@@ -506,7 +572,7 @@ def show_predictive_modeling():
             try:
                 X, y, feature_names = prepare_features(data)
                 
-                if X is not None:
+                if X is not None and len(y) > 0 and not np.any(np.isnan(y)):
                     with st.spinner("Training model..."):
                         model, metrics = train_model(X, y, feature_names)
                         

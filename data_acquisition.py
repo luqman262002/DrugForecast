@@ -117,6 +117,10 @@ def fetch_clinical_trials(condition="cancer", max_studies=500):
             # Filter out studies with zero enrollment
             df = df[df['enrollment'] > 0]
             
+            # Limit to requested max_studies to ensure slider accuracy
+            if len(df) > max_studies:
+                df = df.head(max_studies)
+            
             # Clean sponsor names
             df['sponsor'] = df['sponsor'].str.strip()
             
