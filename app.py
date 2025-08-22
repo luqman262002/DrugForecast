@@ -37,12 +37,38 @@ st.markdown("""
 .stTabs [data-baseweb="tab-list"] {
     gap: 2px;
 }
+.author-name {
+    background: linear-gradient(90deg, #1f77b4, #2ca02c, #ff7f0e);
+    background-size: 300% 300%;
+    animation: gradient 3s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.2em;
+    font-weight: 600;
+    text-align: center;
+    margin: 10px 0;
+    font-family: 'Arial', sans-serif;
+}
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.author-title {
+    color: #666;
+    font-size: 0.9em;
+    text-align: center;
+    margin-bottom: 20px;
+    font-style: italic;
+}
 </style>
 """, unsafe_allow_html=True)
 
 def main():
     st.title("💊 Pharmaceutical Investment Analysis")
     st.markdown("### Predicting Clinical Trial Success with Public Data")
+    st.markdown('<div class="author-name">Dr. Luqman Bin Fahad</div>', unsafe_allow_html=True)
+    st.markdown('<div class="author-title">Data Science & Investment Analytics Portfolio</div>', unsafe_allow_html=True)
     
     # Sidebar
     st.sidebar.title("Navigation")
