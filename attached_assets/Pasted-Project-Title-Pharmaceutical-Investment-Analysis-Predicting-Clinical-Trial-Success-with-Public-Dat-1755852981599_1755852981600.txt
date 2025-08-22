@@ -1,0 +1,54 @@
+Project Title: Pharmaceutical Investment Analysis: Predicting Clinical Trial Success with Public Data
+
+My Goal: To create a compelling data science portfolio project. I want to demonstrate how one would integrate clinical, financial, and regulatory data to predict drug success and investment opportunities. I need to use 100% free data sources and build this as a Jupyter Notebook that I can run on my local machine and showcase on GitHub.
+
+My Skills: I am using AI assistants (you!) to help me write the code as I am still learning.
+
+Data Sources (Free Alternatives):
+
+Clinical Trials: NIH's ClinicalTrials.gov (has a free API and downloadable datasets).
+
+Financial Data: Yahoo Finance (using the yfinance Python library) for stock data of pharmaceutical companies.
+
+Regulatory/Patent Data: This is harder to get for free. We will simulate this or find creative proxies (e.g., using the number of previous patents from a Google Patent search, done manually for a few examples).
+
+Project Steps:
+
+1. Data Acquisition & Simulation:
+* Write a function using the requests library to download a dataset of cancer trials from ClinicalTrials.gov.
+* Use the yfinance library to download historical stock prices for the top 10 pharma companies (e.g., PFE, MRK, JNJ, AZN).
+* We will synthesize a key dataset: a list of "trial outcomes" (Success/Fail). Since real outcome data is messy, we will create a logical rule-based simulation (e.g., trials by large companies in Phase 3 have a 60% success rate, etc.). This is a common practice for portfolio projects.
+
+2. Data Integration & Feature Engineering:
+* Merge the clinical trial data with the financial data on the Sponsor/Company Name.
+* Create features for a machine learning model. For example:
+* sponsor_market_cap: The market cap of the sponsoring company at the trial start date.
+* trial_phase: Encoded phase of the trial (I, II, III).
+* enrollment_size: Size of the trial.
+* previous_trials: Number of previous trials by the same sponsor in the same disease area (simulated).
+
+3. Machine Learning Modeling:
+* Goal: Build a binary classifier to predict the simulated trial_outcome (Success = 1, Fail = 0).
+* Use scikit-learn to train a model like Random Forest or XGBoost.
+* Evaluate the model: Show a confusion matrix, classification report, and feature importance plot.
+
+4. Storytelling & Visualization:
+* This is the most important part. The notebook should tell a story.
+* Create plots using matplotlib and seaborn:
+* A graph showing the high cost of drug development.
+* A chart showing the correlation between a company's market cap and its trial success rate (simulated).
+* The feature importance plot from the model.
+
+Final Deliverable: A single, well-commented Jupyter Notebook (Pharma_Investment_Analysis.ipynb) and a GitHub README that explains the project.
+
+Can you help me with Step 1? Please provide the Python code to:
+
+Import the necessary libraries (pandas, numpy, requests, yfinance).
+
+Fetch a sample dataset of interventional cancer trials from ClinicalTrials.gov using their API.
+
+Download stock data for Pfizer (PFE) for the last 5 years.
+
+Create a small simulated dataset of trial outcomes.
+
+Let's start with this first step. Please write the code and explain how it works.
