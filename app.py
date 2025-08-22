@@ -643,10 +643,32 @@ def show_predictive_modeling():
                 y=tpr, 
                 title=f'ROC Curve (AUC = {metrics["auc"]:.3f})'
             )
-            fig.add_line(x=[0, 1], y=[0, 1], line_dash="dash", line_color="red")
+            fig.add_shape(
+                type="line",
+                x0=0, y0=0, x1=1, y1=1,
+                line=dict(color="red", dash="dash")
+            )
             fig.update_xaxes(title="False Positive Rate")
             fig.update_yaxes(title="True Positive Rate")
             st.plotly_chart(fig, use_container_width=True)
+            
+            st.write("**ROC Curve Interpretation:**")
+            auc_score = metrics['auc']
+            if auc_score > 0.9:
+                performance = "Excellent"
+            elif auc_score > 0.8:
+                performance = "Good"
+            elif auc_score > 0.7:
+                performance = "Fair"
+            else:
+                performance = "Poor"
+                
+            st.write(f"""The ROC curve measures how well our model distinguishes between successful and failed trials:
+            - **AUC Score**: {auc_score:.3f} (closer to 1.0 is better)
+            - **Performance**: {performance} discrimination ability
+            - **Red dashed line**: Random chance (AUC = 0.5)
+            - **Interpretation**: The model can {'very effectively' if auc_score > 0.8 else 'moderately' if auc_score > 0.7 else 'somewhat'} distinguish between trials that will succeed vs. fail
+            """)
         
         # Feature Importance
         if 'feature_importance' in metrics:
