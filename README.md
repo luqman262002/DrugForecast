@@ -19,3 +19,6 @@ streamlit run app.py
 ## Troubleshooting
 - Make sure `requirements.txt` includes all dependencies.
 - If deployment fails, check the app logs for missing packages or other errors.
+
+## Hosted @
+https://drugforecast-4de3s66pqw8xryjtezzuxn.streamlit.app/
